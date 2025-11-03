@@ -23,23 +23,23 @@ namespace Game.Battle.Presentation
         [Header("Lane Settings")]
         [SerializeField] float allyLaneY = 0f;
         [SerializeField] float enemyLaneY = 1.2f;
-        [SerializeField] float worldOriginX = -10f; // µµ¸ÞÀÎ x=0ÀÏ ¶§ÀÇ ¿ùµå X
-        [SerializeField] float unitsToWorldScale = 1f; // µµ¸ÞÀÎ 1 ´ÜÀ§¸¦ ¿ùµå ¸î ¹ÌÅÍ·Î º¼Áö
+        [SerializeField] float worldOriginX = -10f; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ x=0ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ X
+        [SerializeField] float unitsToWorldScale = 1f; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 1 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Í·ï¿½ ï¿½ï¿½ï¿½ï¿½
 
         WorldBattle _battle;
         ProcessBattleStep _step = new ProcessBattleStep();
         bool _settled;
 
-        // µµ¸ÞÀÎ À¯´Ö id¿¡¼­ ºä¸¦ Ã£´Â´Ù
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ idï¿½ï¿½ï¿½ï¿½ ï¿½ä¸¦ Ã£ï¿½Â´ï¿½
         readonly Dictionary<int, UnitView> _views = new Dictionary<int, UnitView>();
 
-        // ½ºÆù ÇïÆÛ
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         UnitView SpawnViewFor(Unit u)
         {
             var prefab = u.Faction == Faction.Ally ? allyPrefab : enemyPrefab;
             if (prefab == null)
             {
-                // ÇÁ¸®ÆÕÀÌ ¾øÀ¸¸é ±âº» Å¥ºê·Î ´ëÃ¼
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½âº» Å¥ï¿½ï¿½ï¿½ ï¿½ï¿½Ã¼
                 prefab = GameObject.CreatePrimitive(PrimitiveType.Cube);
                 prefab.name = "FallbackUnit";
                 var col = prefab.GetComponent<Collider>();
@@ -53,20 +53,20 @@ namespace Game.Battle.Presentation
             var laneY = u.Faction == Faction.Ally ? allyLaneY : enemyLaneY;
 
             var startX = DomainXToWorldX(u.State.Position.x);
-            go.transform.position = new Vector3(startX, laneY, 0f);
+            go.transform.position = new Vector3(startX, laneY, -1f);
 
             var view = go.GetComponent<UnitView>();
             if (view == null) view = go.AddComponent<UnitView>();
             return view;
         }
 
-        // µµ¸ÞÀÎ x¸¦ ¿ùµå x·Î º¯È¯
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ xï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ xï¿½ï¿½ ï¿½ï¿½È¯
         float DomainXToWorldX(float domainX)
         {
             return worldOriginX + domainX * unitsToWorldScale;
         }
 
-        // ÇöÀç ÀüÀåÀÇ ¸ðµç ºä¸¦ µµ¸ÞÀÎ¿¡ ¸ÂÃç ¸ñÇ¥ ÁÂÇ¥·Î µ¿±âÈ­
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ä¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È­
         void SyncViews()
         {
             var toRemove = new List<int>();
@@ -75,7 +75,7 @@ namespace Game.Battle.Presentation
             {
                 var id = new UnitId(kv.Key);
 
-                // 1) Á¸Àç ¾È ÇÏ¸é ºä Á¦°Å
+                // 1) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ï¸ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
                 if (!_battle.TryGetUnit(id, out var u))
                 {
                     if (kv.Value) Destroy(kv.Value.gameObject);
@@ -83,19 +83,19 @@ namespace Game.Battle.Presentation
                     continue;
                 }
 
-                // 2) Á¸ÀçÇÏ¸é ÁÂÇ¥ µ¿±âÈ­
+                // 2) ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½ï¿½ï¿½È­
                 var worldX = DomainXToWorldX(u.State.Position.x);
                 kv.Value.SetTargetX(worldX);
             }
 
-            // 3) µñ¼Å³Ê¸®¿¡¼­ Á¦°Å
+            // 3) ï¿½ï¿½Å³Ê¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             foreach (var k in toRemove) _views.Remove(k);
         }
 
 
         void Start()
         {
-            // ÀüÀå°ú µµ¸ÞÀÎ À¯´Ö ±¸¼º
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             var bounds = new Range1(0f, 20f);
 
             var memA = new Memory(
@@ -106,7 +106,7 @@ namespace Game.Battle.Presentation
                     Defense = 1,
                     Speed = 1.5f,
                     Range = 1.5f,
-                    AttackCooldownSec = 0.8f   // °ø¼ÓÀ» Æ½À¸·Î ÇØ µÒ. 
+                    AttackCooldownSec = 0.8f   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Æ½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½. 
                 },
                 new MoveTowardNearest(),
                 new NearestTarget(),
@@ -122,7 +122,7 @@ namespace Game.Battle.Presentation
                     Defense = 1,
                     Speed = 1.2f,
                     Range = 1.2f,
-                    AttackCooldownSec = 0.4f   // ¿¹: ¿¬Å¸Çü. ´ÙÀ½ Æ½ ¹Ù·Î °¡´É
+                    AttackCooldownSec = 0.4f   // ï¿½ï¿½: ï¿½ï¿½Å¸ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ Æ½ ï¿½Ù·ï¿½ ï¿½ï¿½ï¿½ï¿½
                 },
                 new MoveTowardNearest(),
                 new NearestTarget(),
@@ -136,12 +136,12 @@ namespace Game.Battle.Presentation
 
             _battle = new WorldBattle(bounds, new[] { u1, u2 });
 
-            // ÇÁ·¹Á¨Å×ÀÌ¼Ç ¿ÀºêÁ§Æ® »ý¼º ¹× µî·Ï
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½
             _views[u1.Id.Value] = SpawnViewFor(u1);
             _views[u2.Id.Value] = SpawnViewFor(u2);
 
             Append("Battle start");
-            // Ã¹ ÇÁ·¹ÀÓ¿¡ ¸ñÇ¥ À§Ä¡ µ¿±âÈ­
+            // Ã¹ ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿ï¿½ ï¿½ï¿½Ç¥ ï¿½ï¿½Ä¡ ï¿½ï¿½ï¿½ï¿½È­
             SyncViews();
         }
 
@@ -161,7 +161,7 @@ namespace Game.Battle.Presentation
                 return;
             }
 
-            // PATCH: deltaTime Àü´Þ
+            // PATCH: deltaTime ï¿½ï¿½ï¿½ï¿½
             var r = _step.Run(_battle, Time.deltaTime);
             Append(r.Log);
 
